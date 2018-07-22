@@ -14,5 +14,5 @@
 # limitations under the License.
 #
 
-add_lunch_combo rr_leland-userdebug
+add_lunch_combo aosp_leland-userdebug
 
