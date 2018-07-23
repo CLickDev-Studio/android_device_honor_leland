@@ -24,7 +24,7 @@ import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.RIL;
-import com.android.internal.telephony.RILRequest;
+
 import com.android.internal.telephony.RadioResponse;
 import com.android.internal.telephony.RadioIndication;
 import com.android.internal.telephony.SubscriptionController;
