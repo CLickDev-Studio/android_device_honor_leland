@@ -5,7 +5,7 @@ Honor 9 Lite detailed specifications:
 
 Basic         |Spec Sheet
 -------------:|:---------------------------------------------------------------------------------------------------------------------------
-Network	      |GSM / HSPA / LTE
+Network	      |GSM / HSPA / LTE / CDMA (LLD-AL10)
 Launch	      |2017, December
 Body	      |151 x 71.9 x 7.6 mm (5.94 x 2.83 x 0.30 in); 149 g (5.26 oz); Dual SIM (Hybrid Dual SIM, dual stand-by)
 Display	      |IPS LCD capacitive touchscreen, 16M colors; 5.65 inches; 1080 x 2160 pixels; 18:9 ratio (~428 ppi density)
