@@ -17,14 +17,15 @@
 package com.qualcomm.qti.internal.telephony;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.hardware.radio.V1_0.RadioResponseInfo;
+import android.os.Message;
 import android.os.Registrant;
 import android.os.SystemProperties;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
 
 import com.android.internal.telephony.RIL;
-
 import com.android.internal.telephony.RadioResponse;
 import com.android.internal.telephony.RadioIndication;
 import com.android.internal.telephony.SubscriptionController;
@@ -109,18 +110,17 @@ public class HwRIL extends RIL {
         return new HwRadioIndication(ril);
     }
 
-    RILRequest processResp(RadioResponseInfo i) {
+    Object processResp(RadioResponseInfo i) {
         return processResponse(i);
     }
 
-    void processRespDone(RILRequest r, RadioResponseInfo i, Object o) {
+    Message getMsgFromRequest(Object r) {
+        return getMessageFromRequest(r);
+    }
+
+    void processRespDone(Object r, RadioResponseInfo i, Object o) {
         processResponseDone(r, i, o);
     }
-
-    void processInd(int i) {
-        processIndication(i);
-    }
-
 
     Registrant getSignalStrengthRegistrant() {
         return mSignalStrengthRegistrant;
@@ -151,28 +151,37 @@ public class HwRIL extends RIL {
             radioTech = tm.getVoiceNetworkType(subId);
         }
 
-        if (sSignalCust != null) {
+        int[] threshRsrp = Resources.getSystem().getIntArray(
+                com.android.internal.R.array.config_lteDbmThresholds);
+
+        if (sSignalCust != null && threshRsrp.length == 6) {
             switch (radioTech) {
                 case NETWORK_TYPE_LTE_CA:
                 case NETWORK_TYPE_LTE:
                     if (lteRsrp > -44) { // None or Unknown
-                        lteSignalStrength = 64;
-                        lteRssnr = -200;
+                        lteRsrp = threshRsrp[5] + 1;
+                        lteRssnr = 301;
+                        lteSignalStrength = 99;
                     } else if (lteRsrp >= sSignalCust[1][3]) { // Great
-                        lteSignalStrength = 63;
-                        lteRssnr = 300;
+                        lteRsrp = threshRsrp[4];
+                        lteRssnr = 130;
+                        lteSignalStrength = 12;
                     } else if (lteRsrp >= sSignalCust[1][2]) { // Good
-                        lteSignalStrength = 11;
-                        lteRssnr = 129;
+                        lteRsrp = threshRsrp[3];
+                        lteRssnr = 45;
+                        lteSignalStrength = 8;
                     } else if (lteRsrp >= sSignalCust[1][1]) { // Moderate
-                        lteSignalStrength = 7;
-                        lteRssnr = 44;
+                        lteRsrp = threshRsrp[2];
+                        lteRssnr = 10;
+                        lteSignalStrength = 5;
                     } else if (lteRsrp >= sSignalCust[1][0]) { // Poor
-                        lteSignalStrength = 4;
-                        lteRssnr = 9;
+                        lteRsrp = threshRsrp[1];
+                        lteRssnr = -30;
+                        lteSignalStrength = 0;
                     } else { // None or Unknown
-                        lteSignalStrength = 64;
+                        lteRsrp = threshRsrp[0];
                         lteRssnr = -200;
+                        lteSignalStrength = 99;
                     }
                     break;
                 case NETWORK_TYPE_HSPAP:
@@ -182,51 +191,57 @@ public class HwRIL extends RIL {
                 case NETWORK_TYPE_UMTS:
                     lteRsrp = (gsmSignalStrength & 0xFF) - 256;
                     if (lteRsrp > -20) { // None or Unknown
-                        lteSignalStrength = 64;
-                        lteRssnr = -200;
+                        lteRsrp = threshRsrp[5] + 1;
+                        lteRssnr = 301;
+                        lteSignalStrength = 99;
                     } else if (lteRsrp >= sSignalCust[2][3]) { // Great
-                        lteSignalStrength = 63;
-                        lteRssnr = 300;
+                        lteRsrp = threshRsrp[4];
+                        lteRssnr = 130;
+                        lteSignalStrength = 12;
                     } else if (lteRsrp >= sSignalCust[2][2]) { // Good
-                        lteSignalStrength = 11;
-                        lteRssnr = 129;
+                        lteRsrp = threshRsrp[3];
+                        lteRssnr = 45;
+                        lteSignalStrength = 8;
                     } else if (lteRsrp >= sSignalCust[2][1]) { // Moderate
-                        lteSignalStrength = 7;
-                        lteRssnr = 44;
+                        lteRsrp = threshRsrp[2];
+                        lteRssnr = 10;
+                        lteSignalStrength = 5;
                     } else if (lteRsrp >= sSignalCust[2][0]) { // Poor
-                        lteSignalStrength = 4;
-                        lteRssnr = 9;
+                        lteRsrp = threshRsrp[1];
+                        lteRssnr = -30;
+                        lteSignalStrength = 0;
                     } else { // None or Unknown
-                        lteSignalStrength = 64;
+                        lteRsrp = threshRsrp[0];
                         lteRssnr = -200;
+                        lteSignalStrength = 99;
                     }
                     break;
                 default:
                     lteRsrp = (gsmSignalStrength & 0xFF) - 256;
                     if (lteRsrp > -20) { // None or Unknown
-                        lteSignalStrength = 64;
-                        lteRsrq = -21;
-                        lteRssnr = -200;
+                        lteRsrp = threshRsrp[5] + 1;
+                        lteRssnr = 301;
+                        lteSignalStrength = 99;
                     } else if (lteRsrp >= sSignalCust[0][3]) { // Great
-                        lteSignalStrength = 63;
-                        lteRsrq = -3;
-                        lteRssnr = 300;
+                        lteRsrp = threshRsrp[4];
+                        lteRssnr = 130;
+                        lteSignalStrength = 12;
                     } else if (lteRsrp >= sSignalCust[0][2]) { // Good
-                        lteSignalStrength = 11;
-                        lteRsrq = -7;
-                        lteRssnr = 129;
+                        lteRsrp = threshRsrp[3];
+                        lteRssnr = 45;
+                        lteSignalStrength = 8;
                     } else if (lteRsrp >= sSignalCust[0][1]) { // Moderate
-                        lteSignalStrength = 7;
-                        lteRsrq = -12;
-                        lteRssnr = 44;
+                        lteRsrp = threshRsrp[2];
+                        lteRssnr = 10;
+                        lteSignalStrength = 5;
                     } else if (lteRsrp >= sSignalCust[0][0]) { // Poor
-                        lteSignalStrength = 4;
-                        lteRsrq = -17;
-                        lteRssnr = 9;
+                        lteRsrp = threshRsrp[1];
+                        lteRssnr = -30;
+                        lteSignalStrength = 0;
                     } else { // None or Unknown
-                        lteSignalStrength = 64;
-                        lteRsrq = -21;
+                        lteRsrp = threshRsrp[0];
                         lteRssnr = -200;
+                        lteSignalStrength = 99;
                     }
             }
         }
