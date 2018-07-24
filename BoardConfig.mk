@@ -36,10 +36,17 @@ TARGET_USES_64_BIT_BINDER := true
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
 # Kernel
-BOARD_KERNEL_IMAGE_NAME := Image
-TARGET_NO_KERNEL := false
-TARGET_PREBUILT_KERNEL := /dev/null
+TARGET_KERNEL_CONFIG := merge_hi6250_defconfig
 TARGET_KERNEL_SOURCE := kernel/huawei/hi6250
+BOARD_KERNEL_CMDLINE := loglevel=4 coherent_pool=512K page_tracker=on slub_min_objects=12 androidboot.selinux=permissive
+BOARD_KERNEL_BASE := 0x00478000
+BOARD_KERNEL_PAGESIZE := 2048
+BOARD_MKBOOTIMG_ARGS := --kernel_offset 0x00008000 --ramdisk_offset 0x07b88000 --tags_offset 0x07588000
+HISI_TARGET_PRODUCT := hi6250
+TARGET_ARM_TYPE := arm64
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := aarch64-linux-android-
+BOARD_KERNEL_IMAGE_NAME := Image.gz
+
 
 # Assert
 TARGET_OTA_ASSERT_DEVICE := leland,lld,hi6250
