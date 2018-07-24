@@ -31,3 +31,7 @@ PRODUCT_DEVICE := leland
 PRODUCT_BRAND := Honor
 PRODUCT_MODEL := Honor 9 Lite
 PRODUCT_MANUFACTURER := Huawei
+
+# Use prebuilt kernel
+PRODUCT_COPY_FILES += \
+    $(LOCAL_PATH)/kernel:kernel
