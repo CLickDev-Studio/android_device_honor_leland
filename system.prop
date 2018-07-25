@@ -11,3 +11,6 @@ ro.cp_system_other_odex=0
 
 # Make sdcards visibile in StorageManager
 persist.sys.adoptable_fbe=true
+
+# Add extended display version
+ro.extended.display.version=AOSP-8.1.0-Zeco_modified
