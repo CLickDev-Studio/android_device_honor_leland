@@ -37,6 +37,7 @@ TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
 # Kernel
 TARGET_KERNEL_CONFIG := merge_hi6250_defconfig
+TARGET_NO_KERNEL := false
 TARGET_KERNEL_SOURCE := kernel/honor/hi6250
 BOARD_KERNEL_CMDLINE := loglevel=4 coherent_pool=512K page_tracker=on slub_min_objects=12 androidboot.selinux=permissive
 BOARD_KERNEL_BASE := 0x00478000
